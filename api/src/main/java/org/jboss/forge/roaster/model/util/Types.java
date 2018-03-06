@@ -404,6 +404,24 @@ public class Types
       return "";
    }
 
+   public static <O extends JavaType<O>> String getGenerics(final Type<O> type)
+   {
+      if (isGeneric(type.toString()))
+      {
+         StringBuilder builder = new StringBuilder("<>");
+         int index = 1;
+         for (Type<O> typeArguments : type.getTypeArguments()) {
+             String qualifiedName = typeArguments.getQualifiedName();
+             if(typeArguments.getTypeArguments() != null && !typeArguments.getTypeArguments().isEmpty()) {
+                 qualifiedName += getGenerics(typeArguments);
+             }
+             builder.insert(index++, qualifiedName);
+        }
+        return builder.toString();
+      }
+      return "";
+   }
+
    public static String getGenericsTypeParameter(final String type)
    {
       if (isGeneric(type))
@@ -579,7 +597,7 @@ public class Types
    public static <O extends JavaType<O>> String rebuildGenericNameWithArrays(String resolvedTypeName, Type<O> type)
    {
       StringBuilder resolvedType = new StringBuilder(stripArray(resolvedTypeName));
-      resolvedType.append(getGenerics(type.toString()));
+      resolvedType.append(getGenerics(type));
       for (int j = 0; j < getArrayDimension(type.getName()); j++)
       {
          resolvedType.append("[]");
