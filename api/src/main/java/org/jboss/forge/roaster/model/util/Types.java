@@ -406,20 +406,24 @@ public class Types
 
    public static <O extends JavaType<O>> String getGenerics(final Type<O> type)
    {
-      if (isGeneric(type.toString()))
-      {
-         StringBuilder builder = new StringBuilder("<>");
-         int index = 1;
-         for (Type<O> typeArguments : type.getTypeArguments()) {
-             String qualifiedName = typeArguments.getQualifiedName();
-             if(typeArguments.getTypeArguments() != null && !typeArguments.getTypeArguments().isEmpty()) {
-                 qualifiedName += getGenerics(typeArguments);
-             }
-             builder.insert(index++, qualifiedName);
+        if (isGeneric(type.toString())) {
+            StringBuilder builder = new StringBuilder("<>");
+            int index = 1;
+            for (Type<O> typeArguments : type.getTypeArguments()) {
+                String qualifiedName = typeArguments.getQualifiedName();
+                if (typeArguments.getTypeArguments() != null && !typeArguments.getTypeArguments().isEmpty()) {
+                    qualifiedName += getGenerics(typeArguments);
+                }
+                builder.insert(index, qualifiedName);
+                index += qualifiedName.length();
+                builder.insert(index, ",");
+                index++;
+            }
+            // 2 because there is the last comma and closing tag
+            builder.deleteCharAt(builder.length() - 2);
+            return builder.toString();
         }
-        return builder.toString();
-      }
-      return "";
+        return "";
    }
 
    public static String getGenericsTypeParameter(final String type)
